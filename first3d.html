@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>3D Globe with Search and Marker</title>
     <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCRI2tm4QyUZV3NiNrEzYKu6O4nUmm41Zg&v=alpha&libraries=maps3d,places"></script>
+    
 </head>
 <body>
     <!-- Search Box -->
@@ -25,39 +26,64 @@
 
     <script>
         let mapElement = document.querySelector("gmp-map-3d");
-        let marker = null; // To store the marker instance
+        let marker = null; 
 
         function initAutocomplete() {
             const input = document.getElementById("search-box");
             const autocomplete = new google.maps.places.Autocomplete(input);
-
+        
             autocomplete.addListener("place_changed", () => {
-                const place = autocomplete.getPlace();
+                const place = autocomplete.getPlace();  
 
                 if (!place.geometry || !place.geometry.location) {
                     alert("No details available for the selected location!");
                     return;
                 }
 
-                // Update map's center to the searched location
                 const { lat, lng } = place.geometry.location;
-                mapElement.setAttribute("center", `${lat()}, ${lng()}`);
-                mapElement.setAttribute("range", "1000"); // Zoom in closer to the location
+                
+                // Zoom out effect (to space)
+                mapElement.setAttribute("range", "50000"); // Zoom out significantly
 
-                // Create or update marker
+                // Rotate earth
+                let rotationDegree = 0;
+                let rotateInterval = setInterval(() => {
+                    if (rotationDegree >= 360) {
+                        clearInterval(rotateInterval); // Stop rotating once a full rotation is complete
+                    } else {
+                        rotationDegree += 1; // Rotate 1 degree at a time
+                        mapElement.setAttribute("heading", rotationDegree);
+                    }
+                }, 10);
+
+                // After zooming out and rotating, zoom back in and center on the location
+                setTimeout(() => {
+                    mapElement.setAttribute("center", `${lat()}, ${lng()}`);
+                    mapElement.setAttribute("range", "7000"); // Zoom in after rotation
+                    mapElement.setAttribute("tilt","40");
+                }, 2000); // Wait for the rotation to complete
+
+                // Create or update the marker
                 if (marker) {
-                    // Update marker position
                     marker.setPosition({ lat: lat(), lng: lng() });
                 } else {
-                    // Create a new marker
                     marker = new google.maps.Marker({
                         position: { lat: lat(), lng: lng() },
                         map: mapElement,
-                        title: place.name, // Optional: Add title with place name
+                        title: place.name, 
+                        icon: "https://img.freepik.com/free-vector/shine-old-wooden-chest-realistic-composition-transparent-background-with-vintage-coffer-sparkling-particles_1284-33071.jpg",
+                        scaledSize: new google.maps.Size(50, 50) // Make the marker visible
                     });
                 }
+
+                // Add bounce animation to the marker
+                marker.setAnimation(google.maps.Animation.Bounce);
+                setTimeout(() => {
+                    marker.setAnimation(null);
+                }, 3000);
             });
         }
+        
 
         // Load the autocomplete after the page and script are fully loaded
         window.addEventListener("load", initAutocomplete);
