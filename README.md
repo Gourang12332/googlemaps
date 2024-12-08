@@ -7,5 +7,4 @@ Docs link
 
               https://developers.google.com/maps/documentation/javascript/3d-maps-overview
 
-My small implementation using it.
 
