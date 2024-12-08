@@ -8,14 +8,14 @@
     
 </head>
 <body>
-    <!-- Search Box -->
+    
     <input 
         id="search-box" 
         type="text" 
         placeholder="Type a location..." 
         style="width: 300px; padding: 10px; margin: 10px; font-size: 16px;">
 
-    <!-- 3D Map Component -->
+ 
     <gmp-map-3d 
         id="map3d" 
         center="37.841157, -122.551679" 
@@ -42,28 +42,27 @@
 
                 const { lat, lng } = place.geometry.location;
                 
-                // Zoom out effect (to space)
-                mapElement.setAttribute("range", "50000"); // Zoom out significantly
-
-                // Rotate earth
+                
+                mapElement.setAttribute("range", "50000"); 
+                
                 let rotationDegree = 0;
                 let rotateInterval = setInterval(() => {
                     if (rotationDegree >= 360) {
-                        clearInterval(rotateInterval); // Stop rotating once a full rotation is complete
+                        clearInterval(rotateInterval); 
                     } else {
-                        rotationDegree += 1; // Rotate 1 degree at a time
+                        rotationDegree += 1; 
                         mapElement.setAttribute("heading", rotationDegree);
                     }
                 }, 10);
 
-                // After zooming out and rotating, zoom back in and center on the location
+                
                 setTimeout(() => {
                     mapElement.setAttribute("center", `${lat()}, ${lng()}`);
-                    mapElement.setAttribute("range", "7000"); // Zoom in after rotation
+                    mapElement.setAttribute("range", "7000"); 
                     mapElement.setAttribute("tilt","40");
-                }, 2000); // Wait for the rotation to complete
+                }, 2000); 
 
-                // Create or update the marker
+                
                 if (marker) {
                     marker.setPosition({ lat: lat(), lng: lng() });
                 } else {
@@ -72,11 +71,11 @@
                         map: mapElement,
                         title: place.name, 
                         icon: "https://img.freepik.com/free-vector/shine-old-wooden-chest-realistic-composition-transparent-background-with-vintage-coffer-sparkling-particles_1284-33071.jpg",
-                        scaledSize: new google.maps.Size(50, 50) // Make the marker visible
+                        scaledSize: new google.maps.Size(50, 50) 
                     });
                 }
 
-                // Add bounce animation to the marker
+               
                 marker.setAnimation(google.maps.Animation.Bounce);
                 setTimeout(() => {
                     marker.setAnimation(null);
@@ -85,7 +84,7 @@
         }
         
 
-        // Load the autocomplete after the page and script are fully loaded
+        
         window.addEventListener("load", initAutocomplete);
     </script>
 </body>
